@@ -6,33 +6,26 @@ from flask import Flask
 from datetime import datetime, timezone
 import threading
 
+# dont touch the previous data
 previous_data = {}
+# the channels item tracker will send item changes to
 channel_ids = []
-ALLOWED_USER_ID = 1234567890123456
 
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
+# List of custom messages
 custom_messages = [
-    "Updated the bot to work with Polytoria.co, if there's any change, message me on my blog (hawli.pages.dev)",
+    "its all polytoria.com",
+    "i aint gay but 2k bricks is 2k bricks",
+    "hawli.pages.dev ip logger (trust)",
+    "'I want my Polytoria avatar to be drawn with thigh highs' -turmoil",
+    "RIP queen of england, can I get Polytoria beta access pls?",
+    "Bryckie Colin Harless"
 ]
 
-"""
-custom_messages = [
-    "hawli stop restarting servers",
-    "10+9=21",
-    "𝓯𝓻𝓮𝓪𝓴𝔂 atm",
-   "Spacebuilder+Ohio=Ohiobuilder",
-    "Ye",
-    "Skibidimo",
-    "Bot will never be open source",
-    "Hawki",
-    "bloxius key",
-    "hawlis ban logs are darker than my future"
-]
-"""
-
+# i made this flask thing so to host on shit hostings
 app = Flask(__name__)
 
 @app.route("/")
@@ -56,7 +49,7 @@ async def get_data(page=1):
     Returns:
         dict: JSON response from the API.
     """
-    base_url = "https://polytoria.co/api/store/items"
+    base_url = "https://polytoria.com/api/store/items"
     params = {
         "types[]": ["hat", "tool", "face"],
         "page": page,
@@ -89,7 +82,7 @@ async def send_item_embed(item, is_sold_out):
         is_sold_out (bool): Whether the item is sold out.
     """
     try:
-        item_url = f"https://polytoria.co/store/{item['id']}"
+        item_url = f"https://polytoria.com/store/{item['id']}"
         embed_title = item['name']
         previous_price = previous_data.get(item["id"], {}).get("price")
 
@@ -198,26 +191,8 @@ async def on_ready():
     bot.loop.create_task(change_custom_presence())
     bot.loop.create_task(track_items())
 
-@bot.command()
-async def announce(ctx, *, message):
-    """
-    Command to announce a message to item channels.
-    
-    Usage: !announce Your announcement message here
-    """
-    if ctx.author.id != ALLOWED_USER_ID:
-        await ctx.reply("You are not authorized to use this command.")
-        return
-        
-    for channel_id in channel_ids:
-        channel = bot.get_channel(channel_id)
-        if channel:
-            await channel.send(f"# Announcement: \n {message}")
-        
-    await ctx.send(f"Announcement sent to all channels: {message}")
-
 def start_bot():
-    bot.run("TOKEN_HERE")
+    bot.run("Stupid Token Here")
 
 bot_thread = threading.Thread(target=start_bot)
 bot_thread.start()
